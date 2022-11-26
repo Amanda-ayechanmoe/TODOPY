@@ -8,20 +8,25 @@ while True:
         case 'add':
             todo=input("Enter a todo: ") + "\n"
 
-            file = open('todos.txt', 'r')
-            todo_list = file.readlines()
-            file.close()
+
+            #file = open('todos.txt', 'r')
+            #todo_list = file.readlines()
+            #file.close()
+
+            #Below method is made sure that file is close
+            #Using Context Manager to optimize the code
+            with open('todos.txt', 'r') as file:
+                todo_list = file.readlines()
 
             todo_list.append(todo)
 
-            file = open('todos.txt','w')
-            file.writelines(todo_list)
-            file.close()
+            with open('todos.txt','w') as file:
+                file.writelines(todo_list)
 
         case 'show':
-            file = open('todos.txt', 'r')
-            todo_list = file.readlines()
-            file.close()
+
+            with open('todos.txt', 'r') as file:
+                todo_list = file.readlines()
 
             #remove backslash characters with for loop
 
@@ -42,22 +47,37 @@ while True:
         case 'edit':
             number = input("Number of the todo to edit: ")
             idx = int(number)-1
-            update_todo = input(todo_list[idx] + ":")
-            todo_list[idx] = update_todo
+
+
+
+            with open('todos.txt', 'r') as file:
+                todo_list = file.readlines()
+            print(todo_list)
+
+            update_todo = input(todo_list[idx].strip('\n') + ":")
+            todo_list[idx] = update_todo + '\n'
+
+            with open('todos.txt', 'w') as file:
+                file.writelines(todo_list)
+
             print("Todo List is Updated")
 
         case 'complete':
             number = int(input("Number of the todo to complete: "))
 
-            file = open('todos.txt', 'r')
-            todo_list = file.readlines()
-            file.close()
+            with open('todos.txt', 'r') as file:
+                todo_list = file.readlines()
 
-            todo_list.pop(number-1)
+            index = number-1
+            todo_to_remove = todo_list[index].strip('\n')
+            todo_list.pop(index)
 
-            file = open('todos.txt', 'w')
-            file.writelines(todo_list)
-            file.close()
+
+            with open('todos.txt', 'w') as file:
+                file.writelines(todo_list)
+
+            message = f"Todo {todo_to_remove} was removed from the list."
+            print(message)
 
         case 'exit':
             break
